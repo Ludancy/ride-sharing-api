@@ -65,16 +65,6 @@ Sigue estos pasos para levantar el proyecto en tu entorno local:
    ```
    La API estará disponible en `http://localhost:8000`.
 
-## 📂 Estructura de Modelos (Base de Datos)
-
-El dominio de la aplicación se divide en los siguientes modelos principales:
-- `User`, `Auths`, `Roles`, `PersonalAdmin`
-- `Cliente`, `SaldoCliente`
-- `Chofer`, `PruebaChofer`, `ContactoEmergenciaChofer`
-- `Vehiculo`, `PruebaVehiculo`
-- `Traslado`, `Lugar`
-- `Banco`, `BancoChofer`
-
 ## 📄 Licencia
 
 Este proyecto es de código abierto y está disponible bajo la licencia [MIT](https://opensource.org/licenses/MIT).
