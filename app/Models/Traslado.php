@@ -16,8 +16,12 @@ class Traslado extends Model
     protected $fillable = [
         'idChofer',
         'idCliente',
-        'origen',
-        'destino',
+        'direccion_origen',
+        'lat_origen',
+        'lng_origen',
+        'direccion_destino',
+        'lat_destino',
+        'lng_destino',
         'costo',
         'estado',
         'idVehiculo',
@@ -31,16 +35,6 @@ class Traslado extends Model
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'idCliente');
-    }
-
-    public function origenLugar()
-    {
-        return $this->belongsTo(Lugar::class, 'origen');
-    }
-
-    public function destinoLugar()
-    {
-        return $this->belongsTo(Lugar::class, 'destino');
     }
 
     public function vehiculo()

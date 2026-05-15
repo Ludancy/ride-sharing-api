@@ -573,13 +573,13 @@ class ChoferController extends Controller
                     'estado',
                     'idVehiculo',
                     'traslados.fecha_creacion',
-                    'origen',
-                    'destino',
-                    'lugares.nombre as origennombre',
-                    'destinos.nombre as destinonombre'
+                    'direccion_origen as origennombre',
+                    'direccion_destino as destinonombre',
+                    'lat_origen',
+                    'lng_origen',
+                    'lat_destino',
+                    'lng_destino'
                 )
-                ->leftJoin('lugares', 'traslados.origen', '=', 'lugares.id')
-                ->leftJoin('lugares as destinos', 'traslados.destino', '=', 'destinos.id')
                 ->where('idChofer', $chofer->id)
                 ->whereBetween('traslados.fecha_creacion', [$request->fecha_inicio, $request->fecha_fin])
                 ->orderBy('traslados.fecha_creacion', 'desc')

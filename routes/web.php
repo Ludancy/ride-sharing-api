@@ -22,10 +22,16 @@ Route::get('/logs', function (\Illuminate\Http\Request $request) {
         abort(403, 'Unauthorized access');
     }
 
+    try {
+        \Illuminate\Support\Facades\Log::info('Endpoint /logs fue visitado exitosamente.');
+    } catch (\Exception $e) {
+        return response("Failed to write log: " . $e->getMessage(), 500);
+    }
+
     $logFiles = glob(storage_path('logs/*.log'));
 
     if (empty($logFiles)) {
-        return response("No log files found in storage/logs.\nCurrent LOG_CHANNEL: " . env('LOG_CHANNEL') . "\nIf LOG_CHANNEL is 'errorlog' or 'stderr', logs won't be saved to files.", 404, ['Content-Type' => 'text/plain']);
+        return response("No log files found in storage/logs even after attempting to write one.\nCurrent LOG_CHANNEL: " . env('LOG_CHANNEL') . "\nIf LOG_CHANNEL is 'errorlog' or 'stderr', logs won't be saved to files.", 404, ['Content-Type' => 'text/plain']);
     }
 
     $content = '';

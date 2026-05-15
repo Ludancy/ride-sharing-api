@@ -88,8 +88,12 @@ class ClienteController extends Controller
         try {
             // Validar la solicitud
             $request->validate([
-                'idOrigen' => 'required|exists:lugares,id',
-                'idDestino' => 'required|exists:lugares,id',
+                'direccion_origen' => 'required|string',
+                'lat_origen' => 'required|numeric',
+                'lng_origen' => 'required|numeric',
+                'direccion_destino' => 'required|string',
+                'lat_destino' => 'required|numeric',
+                'lng_destino' => 'required|numeric',
                 'costo' => 'required|numeric',
             ]);
     
@@ -112,12 +116,7 @@ class ClienteController extends Controller
                 return response()->json(['message' => 'No hay choferes disponibles con vehículos aprobados y activos.'], 400);
             }
     
-            // Obtener el valor numérico de los lugares
-            $valorNumericoOrigen = DB::table('lugares')->where('id', $request->idOrigen)->value('valor_numerico');
-            $valorNumericoDestino = DB::table('lugares')->where('id', $request->idDestino)->value('valor_numerico');
-    
-            // Calcular el costo del traslado
-            $costoTraslado = abs($valorNumericoDestino - $valorNumericoOrigen);
+            $costoTraslado = $request->costo;
     
             // Buscar vehículo activo del chofer
             $vehiculoChofer = DB::table('vehiculos')
@@ -131,8 +130,12 @@ class ClienteController extends Controller
     
             // Crear el traslado
             $traslado = DB::table('traslados')->insertGetId([
-                'origen' => $request->idOrigen,
-                'destino' => $request->idDestino,
+                'direccion_origen' => $request->direccion_origen,
+                'lat_origen' => $request->lat_origen,
+                'lng_origen' => $request->lng_origen,
+                'direccion_destino' => $request->direccion_destino,
+                'lat_destino' => $request->lat_destino,
+                'lng_destino' => $request->lng_destino,
                 'costo' => $costoTraslado,
                 'idCliente' => $idCliente,
                 'estado' => 'Pendiente',
@@ -237,13 +240,11 @@ class ClienteController extends Controller
             $traslados = DB::select('
                 SELECT 
                     traslados.*, 
-                    origenes.nombre as nombre_origen,
-                    destinos.nombre as nombre_destino,
+                    traslados.direccion_origen as nombre_origen,
+                    traslados.direccion_destino as nombre_destino,
                     cliente.nombre as nombre_cliente,
                     chofers.nombre as nombre_chofer
                 FROM traslados 
-                JOIN lugares as origenes ON traslados.origen = origenes.id
-                JOIN lugares as destinos ON traslados.destino = destinos.id
                 JOIN cliente ON traslados.idCliente = cliente.id
                 JOIN chofers ON traslados.idChofer = chofers.id
                 WHERE traslados.idCliente = :cliente_id 
@@ -270,13 +271,11 @@ class ClienteController extends Controller
                     'chofers.*',
                     'vehiculos.id as vehiculoId',
                     'vehiculos.*',
-                    'origen_lugar.nombre as origenNombre',
-                    'destino_lugar.nombre as destinoNombre'
+                    'traslados.direccion_origen as origenNombre',
+                    'traslados.direccion_destino as destinoNombre'
                 )
                 ->join('chofers', 'traslados.idChofer', '=', 'chofers.id')
                 ->join('vehiculos', 'traslados.idVehiculo', '=', 'vehiculos.id')
-                ->join('lugares as origen_lugar', 'traslados.origen', '=', 'origen_lugar.id')
-                ->join('lugares as destino_lugar', 'traslados.destino', '=', 'destino_lugar.id')
                 ->where('traslados.id', $trasladoId)
                 ->orderBy('traslados.fecha_creacion', 'DESC')
                 ->first();
