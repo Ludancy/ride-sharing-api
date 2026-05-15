@@ -22,13 +22,19 @@ Route::get('/logs', function (\Illuminate\Http\Request $request) {
         abort(403, 'Unauthorized access');
     }
 
-    $logPath = storage_path('logs/laravel.log');
+    $logFiles = glob(storage_path('logs/*.log'));
 
-    if (!\Illuminate\Support\Facades\File::exists($logPath)) {
-        return response('Log file not found.', 404);
+    if (empty($logFiles)) {
+        return response("No log files found in storage/logs.\nCurrent LOG_CHANNEL: " . env('LOG_CHANNEL') . "\nIf LOG_CHANNEL is 'errorlog' or 'stderr', logs won't be saved to files.", 404, ['Content-Type' => 'text/plain']);
     }
 
-    return response(\Illuminate\Support\Facades\File::get($logPath), 200, [
+    $content = '';
+    foreach ($logFiles as $file) {
+        $content .= "=== " . basename($file) . " ===\n";
+        $content .= \Illuminate\Support\Facades\File::get($file) . "\n\n";
+    }
+
+    return response($content, 200, [
         'Content-Type' => 'text/plain'
     ]);
 });
