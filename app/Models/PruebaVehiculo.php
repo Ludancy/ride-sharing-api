@@ -9,7 +9,7 @@ class PruebaVehiculo extends Model
 {
     use HasFactory;
 
-    protected $table = 'pruebavehiculo';
+    protected $table = 'PruebaVehiculo';
     public $timestamps = false; // Desactivar timestamps
 
     protected $fillable = [

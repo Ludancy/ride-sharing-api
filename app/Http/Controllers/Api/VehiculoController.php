@@ -106,7 +106,7 @@ class VehiculoController extends Controller
     public function index()
     {
         try {
-            $evaluaciones = DB::table('pruebavehiculo')->get();
+            $evaluaciones = DB::table('PruebaVehiculo')->get();
             return response()->json($evaluaciones, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -117,7 +117,7 @@ class VehiculoController extends Controller
     public function show($id)
     {
         try {
-            $evaluacion = DB::table('pruebavehiculo')->find($id);
+            $evaluacion = DB::table('PruebaVehiculo')->find($id);
 
             if (!$evaluacion) {
                 return response()->json(['message' => 'Evaluación de vehículo no encontrada.'], 404);
@@ -144,14 +144,14 @@ public function update(Request $request, $id)
 
     try {
         // Verificar si la evaluación de vehículo existe
-        $evaluacion = DB::table('pruebavehiculo')->find($id);
+        $evaluacion = DB::table('PruebaVehiculo')->find($id);
 
         if (!$evaluacion) {
             return response()->json(['message' => 'Evaluación de vehículo no encontrada.'], 404);
         }
 
         // Actualizar la evaluación de vehículo
-        DB::table('pruebavehiculo')
+        DB::table('PruebaVehiculo')
             ->where('id', $id)
             ->update([
                 'calificacion' => $request->calificacion,
@@ -159,7 +159,7 @@ public function update(Request $request, $id)
             ]);
 
         // Obtener la evaluación de vehículo actualizada
-        $evaluacionActualizada = DB::table('pruebavehiculo')->find($id);
+        $evaluacionActualizada = DB::table('PruebaVehiculo')->find($id);
 
         return response()->json($evaluacionActualizada, 200);
     } catch (\Exception $e) {
@@ -172,14 +172,14 @@ public function destroy($id)
 {
     try {
         // Verificar si la evaluación de vehículo existe
-        $evaluacion = DB::table('pruebavehiculo')->find($id);
+        $evaluacion = DB::table('PruebaVehiculo')->find($id);
 
         if (!$evaluacion) {
             return response()->json(['message' => 'Evaluación de vehículo no encontrada.'], 404);
         }
 
         // Eliminar la evaluación de vehículo
-        DB::table('pruebavehiculo')->where('id', $id)->delete();
+        DB::table('PruebaVehiculo')->where('id', $id)->delete();
 
         return response()->json(['message' => 'Evaluación de vehículo eliminada correctamente.'], 200);
     } catch (\Exception $e) {
@@ -201,7 +201,7 @@ public function evaluacionVehiculo(Request $request)
 
     try {
         // Registrar la prueba del vehículo
-        $pruebaVehiculoId = DB::table('pruebavehiculo')->insertGetId([
+        $pruebaVehiculoId = DB::table('PruebaVehiculo')->insertGetId([
             'idVehiculo' => $request->idVehiculo,
             'calificacion' => $request->calificacion,
             // Agrega otros campos según tus necesidades
@@ -230,8 +230,8 @@ public function evaluacionVehiculo(Request $request)
             ->where('estado_vehiculo', 'Aprobado')
             ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
-                    ->from('pruebavehiculo')
-                    ->whereRaw('pruebavehiculo.idVehiculo = vehiculos.id')
+                    ->from('PruebaVehiculo')
+                    ->whereRaw('PruebaVehiculo.idVehiculo = vehiculos.id')
                     ->where('calificacion', '>=', 65);
             })
             ->get();
@@ -261,8 +261,8 @@ public function evaluacionVehiculo(Request $request)
     {
         // Buscar el vehículo por ID junto con las pruebas de vehículo relacionadas
         $vehiculo = DB::table('vehiculos')
-            ->leftJoin('pruebavehiculo', 'vehiculos.id', '=', 'pruebavehiculo.idVehiculo')
-            ->select('vehiculos.*', 'pruebavehiculo.calificacion')
+            ->leftJoin('PruebaVehiculo', 'vehiculos.id', '=', 'PruebaVehiculo.idVehiculo')
+            ->select('vehiculos.*', 'PruebaVehiculo.calificacion')
             ->where('vehiculos.id', $id)
             ->first();
     

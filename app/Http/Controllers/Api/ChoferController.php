@@ -39,7 +39,7 @@ class ChoferController extends Controller
             DB::beginTransaction();
 
             // Crear la evaluación psicológica directamente en la base de datos
-            $pruebaChoferId = DB::table('pruebachofer')->insertGetId([
+            $pruebaChoferId = DB::table('pruebaChofer')->insertGetId([
                 'idChofer' => $request->input('idChofer'),
                 'calificacion' => $request->input('calificacion'),
                 'fecha_creacion' => now(),
@@ -50,7 +50,7 @@ class ChoferController extends Controller
             DB::commit();
 
             // Obtener la evaluación psicológica recién creada
-            $pruebaChofer = DB::table('pruebachofer')->find($pruebaChoferId);
+            $pruebaChofer = DB::table('pruebaChofer')->find($pruebaChoferId);
 
             return response()->json($pruebaChofer, 201);
         } catch (\Exception $e) {
@@ -75,7 +75,7 @@ class ChoferController extends Controller
 
         try {
             // Obtener la evaluación psicológica del chofer
-            $evaluacion = DB::table('pruebachofer')
+            $evaluacion = DB::table('pruebaChofer')
                 ->where('idChofer', $id)
                 ->orderBy('fecha_creacion', 'desc')
                 ->first();
@@ -94,7 +94,7 @@ class ChoferController extends Controller
     public function indexTodasEvaluacionesPsicologicas()
     {
         try {
-            $evaluaciones = DB::table('pruebachofer')
+            $evaluaciones = DB::table('pruebaChofer')
                 ->orderBy('fecha_creacion', 'desc')
                 ->get();
 
@@ -112,7 +112,7 @@ class ChoferController extends Controller
     {
         try {
             // Eliminar la evaluación psicológica
-            DB::table('pruebachofer')->where('idChofer', $id)->delete();
+            DB::table('pruebaChofer')->where('idChofer', $id)->delete();
 
             return response()->json(['message' => 'Evaluación psicológica eliminada correctamente.'], 200);
         } catch (\Exception $e) {
@@ -135,7 +135,7 @@ class ChoferController extends Controller
 
         try {
             // Actualizar la evaluación psicológica
-            DB::table('pruebachofer')
+            DB::table('pruebaChofer')
                 ->where('idChofer', $id)
                 ->update([
                     'calificacion' => $request->input('calificacion'),
@@ -143,7 +143,7 @@ class ChoferController extends Controller
                 ]);
 
             // Obtener la evaluación psicológica actualizada
-            $evaluacion = DB::table('pruebachofer')->where('idChofer', $id)->first();
+            $evaluacion = DB::table('pruebaChofer')->where('idChofer', $id)->first();
 
             return response()->json($evaluacion, 200);
         } catch (\Exception $e) {
@@ -531,7 +531,7 @@ class ChoferController extends Controller
             }
     
             // Obtener la última evaluación de vehículo asociada al vehículo del chofer
-            $evaluacionVehiculo = DB::table('pruebaVehiculo')
+            $evaluacionVehiculo = DB::table('PruebaVehiculo')
                 ->where('idVehiculo', $idVehiculo)
                 ->orderBy('fecha_creacion', 'desc')
                 ->first();
